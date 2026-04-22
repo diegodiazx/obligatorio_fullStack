@@ -60,4 +60,24 @@ export const eliminarTipoObraService = async (id) => {
     }
 
     return tipoObraEliminada;
+
+}
+
+export const modificarTipoObraService = async (id, datosActualizados) => {
+    if(!isValidObjectId(id)) {
+        const error = new Error("ID con formato inválido");
+        error.status = 400;
+        error.details = { id: id };
+        throw error;
+    }
+
+    const tipoObraModificada = await TipoObra.findByIdAndUpdate(id, datosActualizados, { returnDocument: "after" });
+    if(!tipoObraModificada) {
+        const error = new Error("No se encontró el tipo de obra a modificar");
+        error.status = 404;
+        error.details = { id: id };
+        throw error;
+    }
+
+    return tipoObraModificada;
 }
