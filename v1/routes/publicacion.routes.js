@@ -1,4 +1,5 @@
 import express from "express";
+/*
 import {
     getPublicaciones,
     crearPublicacion,
@@ -14,5 +15,6 @@ router.get("/:id", getPublicacionPorId);
 router.post("/", crearPublicacion);
 router.put("/:id", modificarPublicacion);
 router.delete("/:id", eliminarPublicacion);
+*/
 
 export default router;

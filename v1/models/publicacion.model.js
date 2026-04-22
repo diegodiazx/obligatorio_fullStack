@@ -4,19 +4,19 @@ import mongoose from "mongoose";
     {
         obra: {
             id: {
-                type: string,
+                type: String,
                 required: true
             },
             titulo: {
-                type: string,
+                type: String,
                 required: true
             },
             artista: {
-                type: string,
+                type: String,
                 required: true
             },
             urlImagen:{
-                type: string,
+                type: String,
             }
         },
         fechaPublicacion: {
@@ -44,13 +44,12 @@ import mongoose from "mongoose";
             }
         }],
         donacion: {
-            tipo: Boolean,
+            type: Boolean,
             required: true,
             default: false
         },
         tipoObra: {
-            type: mongoose.Schema.Types.ObjectId, ref: "TipoObra",
-            required: true //?
+            type: mongoose.Schema.Types.ObjectId, ref: "TipoObra"
         },
         estado:{
             type: String,

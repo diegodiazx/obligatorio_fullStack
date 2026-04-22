@@ -29,7 +29,7 @@ export const eliminarTipoObra = async (req, res) => {
     res.status(204).json( {mensaje: "Tipo de obra eliminado exitosamente", tipoObra: tipoObraEliminado} );
 }
 
-export const modificarTipoObraService = async (req, res) => {
+export const modificarTipoObra = async (req, res) => {
     const { id } = req.params;
     const data = req.body;
     const tipoObraModificado = await modificarTipoObraService(id, data);

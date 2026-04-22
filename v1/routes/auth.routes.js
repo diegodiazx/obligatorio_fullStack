@@ -7,8 +7,8 @@ import {
 
 const router = express.Router( {mergeParams: true} );
 
-router.post("/login", ingresarUsuario);
-router.post("/registro", registrarUsuario);
+//router.post("/login", ingresarUsuario);
+//router.post("/registro", registrarUsuario);
 
 export default router;
 
