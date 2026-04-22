@@ -5,7 +5,7 @@ import {
     getTipoObraPorId,
     modificarTipoObra,
     deleteTipoObra
-} from "../controllers/tipoObra.controller.js";
+} from "../controllers/tipoObra.controllers.js";
 
 const router = express.Router( {mergeParams: true} );
 
@@ -14,3 +14,5 @@ router.get("/:id", getTipoObraPorId);
 router.post("/", createTipoObra);
 router.put("/:id", modificarTipoObra);
 router.delete("/:id", deleteTipoObra);
+
+export default router;
