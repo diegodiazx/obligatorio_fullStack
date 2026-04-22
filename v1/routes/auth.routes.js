@@ -4,7 +4,7 @@ import {
     registrarUsuario
     
 } from "../controllers/auth.controllers.js";
-import validateBodyMiddleware from "../middlewares/validateBody.middleware.js";
+import {validateBodyMiddleware} from "../middlewares/validateBody.middleware.js";
 import { loginSchema, registroSchema } from "../validators/auth.validators.js";
 
 const router = express.Router( {mergeParams: true} );
