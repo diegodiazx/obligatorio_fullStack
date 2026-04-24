@@ -1,9 +1,9 @@
 import express from "express";
-import { validateBodyMiddleware } from "../middlewares/validate.middleware.js";
+import { validateBodyMiddleware } from "../middlewares/validateBody.middleware.js";
 import {
   crearPublicacionSchema,
   modificarPublicacionSchema,
-} from "../schemas/publicacion.schema.js";
+} from "../validators/publicacion.validators.js";
 import {
   obtenerPublicaciones,
   crearPublicacion,

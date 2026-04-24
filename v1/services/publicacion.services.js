@@ -1,5 +1,6 @@
 import Publicacion from "../models/publicacion.model.js";
 import axios from "axios";
+import { isValidObjectId } from "mongoose";
 
 export const obtenerPublicacionesService = async () => {
   const publicaciones = await Publicacion.find()
@@ -32,23 +33,35 @@ export const obtenerPublicacionPorIdService = async (id) => {
 };
 
 export const crearPublicacionService = async (data) => {
-  const {
-    obra: { id },
-  } = data;
-  const obraApi = await axios.get(
-    "https://api.artic.edu/api/v1/artworks/" + id,
-  );
+  const {obra: {id}} = data;
+
+  let obraApi;
+  try {
+    obraApi = await axios.get("https://api.artic.edu/api/v1/artworks/" + id);
+  } catch (err) {
+    if (err.response?.status === 404) {
+      const error = new Error("La obra no existe en la API");
+      error.status = 404;
+      error.details = { id };
+      throw error;
+    }
+    throw err;
+  }
 
   if (!obraApi.data?.data) {
     const error = new Error("La obra no existe en la API");
     error.status = 404;
-    error.details = { id: id };
+    error.details = { id };
     throw error;
   }
 
-  data.obra.titulo = obraApi.data.data.title;
-  data.obra.artista = obraApi.data.data.artist_title;
-  data.obra.imagenId = obraApi.data.data.image_id;
+  const obraApiData = obraApi.data.data;
+  data.obra = {
+    ...data.obra,
+    titulo: obraApiData.title || "Sin titulo",
+    artista: obraApiData.artist_title || "Artista desconocido",
+    imagenId: obraApiData.image_id || undefined,
+  };
 
   const nuevaPublicacion = new Publicacion(data);
 

@@ -6,7 +6,7 @@ import {
   eliminarPublicacionService,
 } from "../services/publicacion.services.js";
 
-export const obtenerPublicacionesService = async (req, res) => {
+export const obtenerPublicaciones = async (req, res) => {
   const publicaciones = await obtenerPublicacionesService();
   res.status(200).json(publicaciones);
 };
