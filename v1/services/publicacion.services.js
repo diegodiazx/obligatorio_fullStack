@@ -51,13 +51,23 @@ export const crearPublicacionService = async (data) => {
   try {
     obraApi = await axios.get("https://api.artic.edu/api/v1/artworks/" + id);
   } catch (err) {
-    if (err.response?.status === 404) {
-      const error = new Error("La obra no existe en la API");
+    const status = err.response?.status;
+
+    if (status === 400) {
+      const error = new Error(
+        `El ID de la obra (${id}) no es válido. Debe ser un número entero.`,
+      );
+      error.status = 400;
+      error.details = { id };
+      throw error;
+    }
+
+    if (status === 404) {
+      const error = new Error(`No se encontró ninguna obra con el ID ${id}.`);
       error.status = 404;
       error.details = { id };
       throw error;
     }
-    throw err;
   }
 
   if (!obraApi.data?.data) {

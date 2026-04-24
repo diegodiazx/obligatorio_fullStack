@@ -28,7 +28,7 @@ export const crearPublicacionSchema = Joi.object({
   estado: Joi.string().valid("activa", "pausada").required().messages({
     "string.base": "El estado debe ser una cadena de texto",
     "string.empty": "El estado no puede estar vacío",
-    "string.valid": "El estado debe ser 'activa' o 'pausada'",
+    "any.only": "El estado debe ser 'activa' o 'pausada'",
   }),
 });
 
@@ -47,7 +47,7 @@ export const modificarPublicacionSchema = Joi.object({
     .messages({
       "string.base": "El estado debe ser una cadena de texto",
       "string.empty": "El estado no puede estar vacío",
-      "string.valid":
+      "any.only":
         "El estado debe ser 'activa', 'pausada', 'cancelada' o 'finalizada'",
     }),
 });
