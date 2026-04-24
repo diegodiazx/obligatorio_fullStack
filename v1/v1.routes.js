@@ -3,6 +3,7 @@ import { authorizationMiddleware } from "./middlewares/authorization.middleware.
 import { accessMiddleware } from "./middlewares/access.middleware.js";
 import tipoObraRouter from "./routes/tipoObra.routes.js";
 import authRouter from "./routes/auth.routes.js";
+import publicacionRouter from "./routes/publicacion.routes.js";
 
 const router = express.Router({ mergeParams: true });
 
@@ -14,8 +15,9 @@ router.use("/auth", authRouter);
 
 //rutas protegidas
 
-router.use("/tipoObra", tipoObraRouter)
+router.use("/tipoObra", tipoObraRouter);
+router.use("/publicacion", publicacionRouter);
 
-//router.use(accessMiddleware(['vendedor']));    
+//router.use(accessMiddleware(['vendedor']));
 
 export default router;
