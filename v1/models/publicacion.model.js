@@ -1,3 +1,4 @@
+import { required } from "joi";
 import mongoose from "mongoose";
 
  const publicacionSchema = new mongoose.Schema(
@@ -15,7 +16,7 @@ import mongoose from "mongoose";
                 type: String,
                 required: true
             },
-            urlImagen:{
+            imagenId:{
                 type: String,
             }
         },
@@ -49,7 +50,8 @@ import mongoose from "mongoose";
             default: false
         },
         tipoObra: {
-            type: mongoose.Schema.Types.ObjectId, ref: "TipoObra"
+            type: mongoose.Schema.Types.ObjectId, ref: "TipoObra",
+            required: true  //?
         },
         estado:{
             type: String,
