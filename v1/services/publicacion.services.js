@@ -39,6 +39,13 @@ export const crearPublicacionService = async (data) => {
     "https://api.artic.edu/api/v1/artworks/" + id,
   );
 
+  if (!obraApi.data?.data) {
+    const error = new Error("La obra no existe en la API");
+    error.status = 404;
+    error.details = { id: id };
+    throw error;
+  }
+
   data.obra.titulo = obraApi.data.data.title;
   data.obra.artista = obraApi.data.data.artist_title;
   data.obra.imagenId = obraApi.data.data.image_id;
