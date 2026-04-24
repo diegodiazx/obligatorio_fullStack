@@ -33,7 +33,19 @@ export const obtenerPublicacionPorIdService = async (id) => {
 };
 
 export const crearPublicacionService = async (data) => {
-  const {obra: {id}} = data;
+  /*  const {
+    obra: { id },
+  } = data; */
+
+  //tenemos que validar el id auqnue ya lo hagamos en el validator, porque si no, si el id no es valido,
+  //se rompe todo antes de poder seguir
+  const id = data?.obra?.id;
+
+  if (!id) {
+    const error = new Error("obra.id es requerido");
+    error.status = 400;
+    throw error;
+  }
 
   let obraApi;
   try {
