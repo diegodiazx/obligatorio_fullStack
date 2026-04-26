@@ -1,12 +1,13 @@
 import express from "express";
 import v1Router from "./v1/v1.routes.js";
-import dotenv from "dotenv";
+//import dotenv from "dotenv";
+import "dotenv/config";
 import cors from "cors";
 import { connectDB } from "./v1/config/db.js";
 import { notFoundMiddleware } from "./v1/middlewares/notFound.middleware.js";
 import { errorMiddleware } from "./v1/middlewares/error.middleware.js";
 
-dotenv.config();
+//dotenv.config();
 
 //enseguida nos conectamos a la base de datos
 connectDB();
