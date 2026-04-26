@@ -3,8 +3,8 @@ import Usuario from "../models/usuario.model.js";
 import axios from "axios";
 import { isValidObjectId } from "mongoose";
 
-export const obtenerPublicacionesService = async () => {
-  const publicaciones = await Publicacion.find()
+export const obtenerPublicacionesService = async ({ filtro }) => {
+  const publicaciones = await Publicacion.find(filtro)
     .populate("tipoObra")
     .populate("ganador", "nombre email");
   if (publicaciones.length === 0) {
