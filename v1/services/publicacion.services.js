@@ -47,6 +47,14 @@ export const crearPublicacionService = async (data) => {
     throw error;
   }
 
+  const existePublicacionConObra = await Publicacion.exists({ "obra.id": id, estado: { $in: ["activa", "finalizada", "pausada"] } });
+  if (existePublicacion) {
+    const error = new Error(`Ya existe una publicación activa, finalizada o pausada para la obra con ID ${id}`);
+    error.status = 409;
+    error.details = { id };
+    throw error;
+  }
+
   let obraApi;
   try {
     obraApi = await axios.get("https://api.artic.edu/api/v1/artworks/" + id);
@@ -122,17 +130,23 @@ export const modificarPublicacionService = async (id, dataActualizada) => {
     throw error;
   }
 
-  const publicacionModificada = await Publicacion.findByIdAndUpdate(
-    id,
-    dataActualizada,
-    { returnDocument: "after" },
-  );
-  if (!publicacionModificada) {
+  const publicacionAModificar = await Publicacion.findById(id);
+  if (!publicacionAModificar) {
     const error = new Error("No se encontró la publicación a modificar");
     error.status = 404;
     error.details = { id: id };
     throw error;
   }
+  if(publicacionAModificar.estado === "finalizada" || publicacionAModificar.estado === "cancelada"){
+    const error = new Error("No se puede modificar una publicación finalizada o cancelada");
+    error.status = 400;
+    throw error;
+  }
 
+  const publicacionModificada = await Publicacion.findByIdAndUpdate(
+    id,
+    dataActualizada,
+    { returnDocument: "after" },
+  );
   return publicacionModificada;
 };

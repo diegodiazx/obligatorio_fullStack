@@ -1,3 +1,5 @@
+import jwt from "jsonwebtoken";
+
 export const authorizationMiddleware = (req, res, next) => {
   //tenemos que recibir el token de algun lado, como los headers
   const auth = req.headers.authorization;

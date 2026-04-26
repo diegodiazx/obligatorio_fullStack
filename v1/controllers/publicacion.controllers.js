@@ -19,7 +19,7 @@ export const obtenerPublicacionPorId = async (req, res) => {
 
 export const crearPublicacion = async (req, res) => {
   const nuevaPublicacion = await crearPublicacionService(req.validatedBody);
-  res.status(201).json(nuevaPublicacion);
+  res.status(201).json( {mensaje: "Publicación creada exitosamente", data: nuevaPublicacion});
 };
 
 export const modificarPublicacion = async (req, res) => {
@@ -28,11 +28,11 @@ export const modificarPublicacion = async (req, res) => {
     id,
     req.validatedBody,
   );
-  res.status(200).json(publicacionModificada);
+  res.status(200).json( {mensaje: "Publicación modificada exitosamente", data: publicacionModificada});
 };
 
 export const eliminarPublicacion = async (req, res) => {
   const { id } = req.params;
   const publicacionEliminada = await eliminarPublicacionService(id);
-  res.status(200).json(publicacionEliminada);
+  res.status(200).json( {mensaje: "Publicación eliminada exitosamente", data: publicacionEliminada});
 };
