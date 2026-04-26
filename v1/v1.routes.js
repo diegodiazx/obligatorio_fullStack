@@ -6,6 +6,7 @@ import authRouter from "./routes/auth.routes.js";
 import publicacionRouter from "./routes/publicacion.routes.js";
 import usuarioRouter from "./routes/usuario.routes.js";
 import uploadsRouter from "./routes/uploads.routes.js";
+import aiRouter from "./routes/ai.routes.js";
 
 const router = express.Router({ mergeParams: true });
 
@@ -21,6 +22,7 @@ router.use("/tipoObra", tipoObraRouter);
 router.use("/publicacion", publicacionRouter);
 router.use("/usuario", usuarioRouter);
 router.use("/uploads", uploadsRouter);
+router.use("/ai", aiRouter);
 
 //router.use(accessMiddleware(['vendedor']));
 
