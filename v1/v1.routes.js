@@ -18,7 +18,7 @@ router.use("/auth", authRouter);
 
 router.use("/tipoObra", tipoObraRouter);
 router.use("/publicacion", publicacionRouter);
-router.use("/usuario", usuarioRouter);
+router.use("/usuario", authorizationMiddleware, usuarioRouter);
 
 //router.use(accessMiddleware(['vendedor']));
 

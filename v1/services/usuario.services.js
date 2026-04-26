@@ -17,6 +17,7 @@ export const actualizarPlanPremiumService = async (usuarioId) => {
     throw error;
   }
 
+  //esto ya lo chequeamos en la ruta con el middleware de acceso; va igual o no?
   if (usuario.rol !== "vendedor") {
     const error = new Error("Solo los vendedores pueden cambiar su plan");
     error.status = 403;

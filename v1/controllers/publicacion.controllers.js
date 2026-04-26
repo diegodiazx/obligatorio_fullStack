@@ -18,7 +18,7 @@ export const obtenerPublicacionPorId = async (req, res) => {
 };
 
 export const crearPublicacion = async (req, res) => {
-  const nuevaPublicacion = await crearPublicacionService(req.validatedBody);
+  const nuevaPublicacion = await crearPublicacionService(req.validatedBody, req.user.id);
   res.status(201).json( {mensaje: "Publicación creada exitosamente", data: nuevaPublicacion});
 };
 

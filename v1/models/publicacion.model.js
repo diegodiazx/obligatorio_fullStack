@@ -66,6 +66,11 @@ const publicacionSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Usuario",
   },
+  vendedor: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Usuario",
+    required: true //?
+  }
 });
 
 export default mongoose.model(

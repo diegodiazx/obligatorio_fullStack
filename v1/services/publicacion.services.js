@@ -1,4 +1,5 @@
 import Publicacion from "../models/publicacion.model.js";
+import Usuario from "../models/usuario.model.js";
 import axios from "axios";
 import { isValidObjectId } from "mongoose";
 
@@ -23,7 +24,8 @@ export const obtenerPublicacionPorIdService = async (id) => {
 
   const publicacion = await Publicacion.findById(id)
     .populate("tipoObra")
-    .populate("ganador", "nombre email");
+    .populate("ganador", "nombre email")
+    .populate("vendedor", "nombre email");
   if (!publicacion) {
     const error = new Error("No se encontró la publicación");
     error.status = 404;
@@ -32,10 +34,32 @@ export const obtenerPublicacionPorIdService = async (id) => {
   return publicacion;
 };
 
-export const crearPublicacionService = async (data) => {
-  /*  const {
-    obra: { id },
-  } = data; */
+export const crearPublicacionService = async (data, usuarioId) => {
+
+  if(!isValidObjectId(usuarioId)){
+    const error = new Error("ID de usuario con formato inválido");
+    error.status = 400;
+    error.details = { id: usuarioId };
+    throw error;
+  }
+
+  //necesario? siempre va a haber; esta logueado
+  const usuario = await Usuario.findById(usuarioId);
+  if(!usuario){
+    const error = new Error("No se encontró el usuario");
+    error.status = 404;
+    error.details = { id: usuarioId };
+    throw error;
+  }
+
+  const cantPublicacionesUsuario = await Publicacion.countDocuments({ vendedor: usuarioId });
+  if(usuario.subscripcion !== "premium" && cantPublicacionesUsuario >= 4){
+    const error = new Error("El usuario ha alcanzado el límite de publicaciones para su plan. Actualice a premium para publicar más obras.");
+    error.status = 403;
+    throw error;
+  };
+
+
 
   //tenemos que validar el id auqnue ya lo hagamos en el validator, porque si no, si el id no es valido,
   //se rompe todo antes de poder seguir
@@ -47,8 +71,9 @@ export const crearPublicacionService = async (data) => {
     throw error;
   }
 
+
   const existePublicacionConObra = await Publicacion.exists({ "obra.id": id, estado: { $in: ["activa", "finalizada", "pausada"] } });
-  if (existePublicacion) {
+  if (existePublicacionConObra) {
     const error = new Error(`Ya existe una publicación activa, finalizada o pausada para la obra con ID ${id}`);
     error.status = 409;
     error.details = { id };
@@ -92,6 +117,7 @@ export const crearPublicacionService = async (data) => {
     artista: obraApiData.artist_title || "Artista desconocido",
     imagenId: obraApiData.image_id || undefined,
   };
+  data.vendedor = usuarioId;
 
   const nuevaPublicacion = new Publicacion(data);
 
