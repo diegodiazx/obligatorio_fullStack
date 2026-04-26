@@ -1,5 +1,7 @@
 import Oferta from "../models/oferta.model.js";
 import Usuario from "../models/usuario.model.js";
+import { isValidObjectId } from "mongoose";
+import Publicacion from "../models/publicacion.model.js";
 
 export const crearOfertaService = async (monto, usuarioId, publicacionId) => {
   if (!isValidObjectId(usuarioId)) {
