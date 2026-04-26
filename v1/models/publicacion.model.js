@@ -27,23 +27,6 @@ const publicacionSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
-  historialOfertas: [
-    {
-      usuario: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Usuario",
-        required: true,
-      },
-      monto: {
-        type: Number,
-        required: true,
-      },
-      fechaOferta: {
-        type: Date,
-        required: true,
-      },
-    },
-  ],
   donacion: {
     type: Boolean,
     required: true,
@@ -69,8 +52,8 @@ const publicacionSchema = new mongoose.Schema({
   vendedor: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Usuario",
-    required: true //?
-  }
+    required: true, //?
+  },
 });
 
 export default mongoose.model(

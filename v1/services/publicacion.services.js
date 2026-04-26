@@ -1,5 +1,6 @@
 import Publicacion from "../models/publicacion.model.js";
 import Usuario from "../models/usuario.model.js";
+import Oferta from "../models/oferta.model.js";
 import axios from "axios";
 import { isValidObjectId } from "mongoose";
 
@@ -35,8 +36,7 @@ export const obtenerPublicacionPorIdService = async (id) => {
 };
 
 export const crearPublicacionService = async (data, usuarioId) => {
-
-  if(!isValidObjectId(usuarioId)){
+  if (!isValidObjectId(usuarioId)) {
     const error = new Error("ID de usuario con formato inválido");
     error.status = 400;
     error.details = { id: usuarioId };
@@ -45,21 +45,23 @@ export const crearPublicacionService = async (data, usuarioId) => {
 
   //necesario? siempre va a haber; esta logueado
   const usuario = await Usuario.findById(usuarioId);
-  if(!usuario){
+  if (!usuario) {
     const error = new Error("No se encontró el usuario");
     error.status = 404;
     error.details = { id: usuarioId };
     throw error;
   }
 
-  const cantPublicacionesUsuario = await Publicacion.countDocuments({ vendedor: usuarioId });
-  if(usuario.subscripcion !== "premium" && cantPublicacionesUsuario >= 4){
-    const error = new Error("El usuario ha alcanzado el límite de publicaciones para su plan. Actualice a premium para publicar más obras.");
+  const cantPublicacionesUsuario = await Publicacion.countDocuments({
+    vendedor: usuarioId,
+  });
+  if (usuario.subscripcion !== "premium" && cantPublicacionesUsuario >= 4) {
+    const error = new Error(
+      "El usuario ha alcanzado el límite de publicaciones para su plan. Actualice a premium para publicar más obras.",
+    );
     error.status = 403;
     throw error;
-  };
-
-
+  }
 
   //tenemos que validar el id auqnue ya lo hagamos en el validator, porque si no, si el id no es valido,
   //se rompe todo antes de poder seguir
@@ -71,10 +73,14 @@ export const crearPublicacionService = async (data, usuarioId) => {
     throw error;
   }
 
-
-  const existePublicacionConObra = await Publicacion.exists({ "obra.id": id, estado: { $in: ["activa", "finalizada", "pausada"] } });
+  const existePublicacionConObra = await Publicacion.exists({
+    "obra.id": id,
+    estado: { $in: ["activa", "finalizada", "pausada"] },
+  });
   if (existePublicacionConObra) {
-    const error = new Error(`Ya existe una publicación activa, finalizada o pausada para la obra con ID ${id}`);
+    const error = new Error(
+      `Ya existe una publicación activa, finalizada o pausada para la obra con ID ${id}`,
+    );
     error.status = 409;
     error.details = { id };
     throw error;
@@ -129,6 +135,8 @@ los campos son title, artist_title, classification_title, image_id,  iiif_url de
 de config.
 */
 
+//que pasa con las ofertas para una publicacion cuando la eliminamos?
+//se eliminan tambien? de la coleccion
 export const eliminarPublicacionService = async (id) => {
   if (!isValidObjectId(id)) {
     const error = new Error("ID con formato inválido");
@@ -163,8 +171,13 @@ export const modificarPublicacionService = async (id, dataActualizada) => {
     error.details = { id: id };
     throw error;
   }
-  if(publicacionAModificar.estado === "finalizada" || publicacionAModificar.estado === "cancelada"){
-    const error = new Error("No se puede modificar una publicación finalizada o cancelada");
+  if (
+    publicacionAModificar.estado === "finalizada" ||
+    publicacionAModificar.estado === "cancelada"
+  ) {
+    const error = new Error(
+      "No se puede modificar una publicación finalizada o cancelada",
+    );
     error.status = 400;
     throw error;
   }
@@ -175,4 +188,29 @@ export const modificarPublicacionService = async (id, dataActualizada) => {
     { returnDocument: "after" },
   );
   return publicacionModificada;
+};
+
+export const finalizarPublicacionService = async (id) => {
+  if (!isValidObjectId(id)) {
+    const error = new Error("ID con formato inválido");
+    error.status = 400;
+    error.details = { id: id };
+    throw error;
+  }
+  //ordenamos las ofertas de forma descendente por el monto y tomamos la primera
+  //es decir, la oferta con el monto mas alto, que es la ganadora
+  const ofertas = await Oferta.find({ publicacion: id })
+    .sort({ monto: -1 })
+    .limit(1);
+  const ofertaGanadora = ofertas[0];
+  const publicacionFinalizada = await Publicacion.findByIdAndUpdate(
+    id,
+    {
+      //si la publicacion no tuvo ninguna oferta en lugar de finalizarla la tomamos como cancelada
+      estado: ofertaGanadora ? "finalizada" : "cancelada",
+      ganador: ofertaGanadora ? ofertaGanadora.usuario : null,
+    },
+    { returnDocument: "after" },
+  );
+  return publicacionFinalizada.populate("ganador", "nombre email");
 };

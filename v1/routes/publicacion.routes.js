@@ -10,6 +10,7 @@ import {
   obtenerPublicacionPorId,
   modificarPublicacion,
   eliminarPublicacion,
+  finalizarPublicacion,
 } from "../controllers/publicacion.controllers.js";
 
 const router = express.Router({ mergeParams: true });
@@ -27,5 +28,6 @@ router.put(
   modificarPublicacion,
 );
 router.delete("/:id", eliminarPublicacion);
+router.patch("/:id/finalizar", finalizarPublicacion);
 
 export default router;

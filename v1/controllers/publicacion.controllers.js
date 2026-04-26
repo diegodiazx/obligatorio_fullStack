@@ -57,3 +57,12 @@ export const eliminarPublicacion = async (req, res) => {
     data: publicacionEliminada,
   });
 };
+
+export const finalizarPublicacion = async (req, res) => {
+  const { id } = req.params;
+  const publicacionFinalizada = await finalizarPublicacionService(id);
+  res.status(200).json({
+    mensaje: "Publicación finalizada exitosamente",
+    data: publicacionFinalizada,
+  });
+};
