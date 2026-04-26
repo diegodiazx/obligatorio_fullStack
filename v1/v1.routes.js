@@ -12,13 +12,13 @@ const router = express.Router({ mergeParams: true });
 
 router.use("/auth", authRouter);
 
-//router.use(authorizationMiddleware);
+router.use(authorizationMiddleware);
 
 //rutas protegidas
 
 router.use("/tipoObra", tipoObraRouter);
 router.use("/publicacion", publicacionRouter);
-router.use("/usuario", authorizationMiddleware, usuarioRouter);
+router.use("/usuario", usuarioRouter);
 
 //router.use(accessMiddleware(['vendedor']));
 
