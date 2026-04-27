@@ -57,6 +57,10 @@ const publicacionSchema = new mongoose.Schema({
     ref: "Usuario",
     required: true, //?
   },
+  ultimaOferta: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Oferta",
+  },
 });
 
 export default mongoose.model(

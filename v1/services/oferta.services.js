@@ -33,6 +33,27 @@ export const crearOfertaService = async (monto, usuarioId, publicacionId) => {
     throw error;
   }
 
+  //1era oferta siempre tiene que ser mayor al precio base
+  if (monto <= publicacion.precioBase) {
+    const error = new Error(
+      "El monto de la oferta debe ser mayor al precio base",
+    );
+    error.status = 400;
+    throw error;
+  }
+
+  //las siguientes ofertas tienen que ser mayores a la ultima oferta
+  if (publicacion.ultimaOferta) {
+    const ultimaOferta = await Oferta.findById(publicacion.ultimaOferta);
+    if (monto <= ultimaOferta.monto) {
+      const error = new Error(
+        "El monto de la oferta debe ser mayor al de la última oferta",
+      );
+      error.status = 400;
+      throw error;
+    }
+  }
+
   //solo se puede hacer una ofterta si la publicacion esta activa
   if (publicacion.estado !== "activa") {
     const error = new Error(
@@ -47,5 +68,7 @@ export const crearOfertaService = async (monto, usuarioId, publicacionId) => {
     monto: monto,
   });
   await nuevaOferta.save();
+  publicacion.ultimaOferta = nuevaOferta._id;
+  await publicacion.save();
   return nuevaOferta;
 };

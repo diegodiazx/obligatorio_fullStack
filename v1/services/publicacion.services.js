@@ -5,10 +5,22 @@ import axios from "axios";
 import { isValidObjectId } from "mongoose";
 import { generarBiografiaService } from "./ai.services.js";
 
-export const obtenerPublicacionesService = async ({ filtro }) => {
+export const obtenerPublicacionesService = async ({ filtro, page, limit }) => {
+  page = Number(page) || 1;
+  limit = Number(limit) || 3;
+  const skip = (page - 1) * limit;
+  const cantidadPublicaciones = await Publicacion.countDocuments();
+  //cant de paginas totales
+  const paginas = Math.ceil(cantidadPublicaciones / limit);
+
   const publicaciones = await Publicacion.find(filtro)
     .populate("tipoObra")
-    .populate("ganador", "nombre email");
+    .populate("ganador", "nombre email")
+    .populate("vendedor", "nombre email")
+    .populate("ultimaOferta")
+    .skip(skip)
+    .limit(limit);
+
   if (publicaciones.length === 0) {
     const error = new Error("No se encontraron publicaciones");
     error.status = 404;
@@ -27,7 +39,8 @@ export const obtenerPublicacionPorIdService = async (id) => {
   const publicacion = await Publicacion.findById(id)
     .populate("tipoObra")
     .populate("ganador", "nombre email")
-    .populate("vendedor", "nombre email");
+    .populate("vendedor", "nombre email")
+    .populate("ultimaOferta", "monto usuario");
   if (!publicacion) {
     const error = new Error("No se encontró la publicación");
     error.status = 404;
@@ -36,7 +49,7 @@ export const obtenerPublicacionPorIdService = async (id) => {
   return publicacion;
 };
 
-export const misPublicacionesService = async (usuarioId) => {
+export const misPublicacionesService = async (usuarioId, page, limit) => {
   if (!isValidObjectId(usuarioId)) {
     const error = new Error("ID de usuario con formato inválido");
     error.status = 400;
@@ -55,7 +68,9 @@ export const misPublicacionesService = async (usuarioId) => {
   if (usuario.rol === "vendedor") {
     const publicaciones = await Publicacion.find({ vendedor: usuarioId })
       .populate("tipoObra")
-      .populate("ganador", "nombre email");
+      .populate("ganador", "nombre email")
+      .populate("vendedor", "nombre email")
+      .populate("ultimaOferta", "monto usuario");
     return publicaciones;
   } else if (usuario.rol === "comprador") {
     const publicacionesIds = await Oferta.distinct("publicacion", {
@@ -69,12 +84,11 @@ export const misPublicacionesService = async (usuarioId) => {
       .populate("ganador", "nombre email");
 
     return publicaciones;
-
-  } else { //?? esto no deberia pasar porque el rol lo validamos en el registro, pero por las dudas
-      const error = new Error("Rol de usuario no válido");
-      error.status = 400;
-      throw error;
-
+  } else {
+    //?? esto no deberia pasar porque el rol lo validamos en el registro, pero por las dudas
+    const error = new Error("Rol de usuario no válido");
+    error.status = 400;
+    throw error;
   }
   return [];
 };
@@ -246,20 +260,30 @@ export const finalizarPublicacionService = async (id) => {
     error.details = { id: id };
     throw error;
   }
-  //ordenamos las ofertas de forma descendente por el monto y tomamos la primera
-  //es decir, la oferta con el monto mas alto, que es la ganadora
-  const ofertas = await Oferta.find({ publicacion: id })
-    .sort({ monto: -1 })
-    .limit(1);
-  const ofertaGanadora = ofertas[0];
-  const publicacionFinalizada = await Publicacion.findByIdAndUpdate(
-    id,
-    {
-      //si la publicacion no tuvo ninguna oferta en lugar de finalizarla la tomamos como cancelada
-      estado: ofertaGanadora ? "finalizada" : "cancelada",
-      ganador: ofertaGanadora ? ofertaGanadora.usuario : null,
-    },
-    { returnDocument: "after" },
-  );
-  return publicacionFinalizada.populate("ganador", "nombre email");
+
+  const publicacion = await Publicacion.findById(id).populate("ultimaOferta");
+
+  if (!publicacion) {
+    const error = new Error("No se encontró la publicación a finalizar");
+    error.status = 404;
+    throw error;
+  }
+
+  if (publicacion.estado !== "activa") {
+    const error = new Error("Solo se pueden finalizar publicaciones activas");
+    error.status = 400;
+    throw error;
+  }
+
+  const ofertaGanadora = publicacion.ultimaOferta
+    ? publicacion.ultimaOferta
+    : null;
+
+  publicacion.estado = ofertaGanadora ? "finalizada" : "cancelada";
+  publicacion.ganador = ofertaGanadora ? ofertaGanadora.usuario : null;
+
+  await publicacion.save();
+  return publicacion
+    .populate("ganador", "nombre email")
+    .populate("ultimaOferta", "monto usuario");
 };
