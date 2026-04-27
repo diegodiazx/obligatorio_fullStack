@@ -5,7 +5,9 @@ export const getModels = (req, res) => {
 };
 
 export const useGemini25Flash = (req, res) => {
-  let text = req.body.prompt;
+  const { artista, titulo } = req.body;
+  let text =
+    "Generame una biografia corta para el artista {{artista}} de la obra {{titulo}}";
   const API_KEY = process.env.GEMINI_25_API_KEY;
   const MODEL = "gemini-2.5-flash";
   const ENDPOINT = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`;
