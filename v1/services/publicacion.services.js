@@ -36,6 +36,49 @@ export const obtenerPublicacionPorIdService = async (id) => {
   return publicacion;
 };
 
+export const misPublicacionesService = async (usuarioId) => {
+  if (!isValidObjectId(usuarioId)) {
+    const error = new Error("ID de usuario con formato inválido");
+    error.status = 400;
+    error.details = { id: usuarioId };
+    throw error;
+  }
+
+  const usuario = await Usuario.findById(usuarioId);
+  if (!usuario) {
+    const error = new Error("No se encontró el usuario");
+    error.status = 404;
+    error.details = { id: usuarioId };
+    throw error;
+  }
+
+  if (usuario.rol === "vendedor") {
+    const publicaciones = await Publicacion.find({ vendedor: usuarioId })
+      .populate("tipoObra")
+      .populate("ganador", "nombre email");
+    return publicaciones;
+  } else if (usuario.rol === "comprador") {
+    const publicacionesIds = await Oferta.distinct("publicacion", {
+      usuario: usuarioId,
+    });
+
+    const publicaciones = await Publicacion.find({
+      _id: { $in: publicacionesIds },
+    })
+      .populate("tipoObra")
+      .populate("ganador", "nombre email");
+
+    return publicaciones;
+
+  } else { //?? esto no deberia pasar porque el rol lo validamos en el registro, pero por las dudas
+      const error = new Error("Rol de usuario no válido");
+      error.status = 400;
+      throw error;
+
+  }
+  return [];
+};
+
 export const crearPublicacionService = async (data, usuarioId) => {
   if (!isValidObjectId(usuarioId)) {
     const error = new Error("ID de usuario con formato inválido");

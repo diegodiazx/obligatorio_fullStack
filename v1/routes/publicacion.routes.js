@@ -8,6 +8,7 @@ import {
   obtenerPublicaciones,
   crearPublicacion,
   obtenerPublicacionPorId,
+  misPublicaciones,
   modificarPublicacion,
   eliminarPublicacion,
   finalizarPublicacion,
@@ -16,6 +17,7 @@ import {
 const router = express.Router({ mergeParams: true });
 
 router.get("/", obtenerPublicaciones);
+router.get("/mis-publicaciones", misPublicaciones);
 router.get("/:id", obtenerPublicacionPorId);
 router.post(
   "/",

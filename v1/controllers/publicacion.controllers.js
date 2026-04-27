@@ -4,6 +4,7 @@ import {
   obtenerPublicacionPorIdService,
   modificarPublicacionService,
   eliminarPublicacionService,
+  misPublicacionesService
 } from "../services/publicacion.services.js";
 
 export const obtenerPublicaciones = async (req, res) => {
@@ -11,10 +12,9 @@ export const obtenerPublicaciones = async (req, res) => {
 
   //?? no hay otra forma de filtrar sin tener que definir todo aca
   if (req.query.estado) filtro.estado = req.query.estado;
-  // if (req.query.tipoObra) filtro["tipoObra._id"] = req.query.tipoObra;
-  if (req.query.vendedor) filtro.vendedor = req.query.vendedor;
-  if (req.query.titulo) filtro.titulo = req.query.titulo;
-  if (req.query.artista) filtro.artista = req.query.artista;
+  if (req.query.tipoObra) filtro["tipoObra._id"] = req.query.tipoObra;
+  if (req.query.titulo) filtro["obra.titulo"] = req.query.titulo;
+  if (req.query.artista) filtro["obra.artista"] = req.query.artista;
 
   const publicaciones = await obtenerPublicacionesService({ filtro });
   res.status(200).json(publicaciones);
@@ -25,6 +25,12 @@ export const obtenerPublicacionPorId = async (req, res) => {
   const publicacion = await obtenerPublicacionPorIdService(id);
   res.status(200).json(publicacion);
 };
+
+export const misPublicaciones = async (req, res) => {
+  const usuarioId = req.user.id;
+  const publicaciones = await misPublicacionesService(usuarioId);
+  res.status(200).json( {mensaje: "Publicaciones obtenidas exitosamente", data: publicaciones});
+}
 
 export const crearPublicacion = async (req, res) => {
   const nuevaPublicacion = await crearPublicacionService(
