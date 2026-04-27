@@ -3,6 +3,7 @@ import Usuario from "../models/usuario.model.js";
 import Oferta from "../models/oferta.model.js";
 import axios from "axios";
 import { isValidObjectId } from "mongoose";
+import { generarBiografiaService } from "./ai.services.js";
 
 export const obtenerPublicacionesService = async ({ filtro }) => {
   const publicaciones = await Publicacion.find(filtro)
@@ -125,6 +126,11 @@ export const crearPublicacionService = async (data, usuarioId) => {
   };
   data.vendedor = usuarioId;
 
+  const bio = await generarBiografiaService(
+    data.obra.artista,
+    data.obra.titulo,
+  );
+  data.obra.biografia = bio ? bio : null;
   const nuevaPublicacion = new Publicacion(data);
 
   return await nuevaPublicacion.save();

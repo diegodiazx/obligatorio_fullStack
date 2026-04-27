@@ -14,6 +14,9 @@ const publicacionSchema = new mongoose.Schema({
       type: String,
       required: true,
     },
+    biografia: {
+      type: String,
+    },
     imagenId: {
       type: String,
     },

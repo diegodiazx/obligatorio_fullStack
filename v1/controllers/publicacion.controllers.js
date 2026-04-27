@@ -31,6 +31,7 @@ export const crearPublicacion = async (req, res) => {
     req.validatedBody,
     req.user.id,
   );
+  
   res.status(201).json({
     mensaje: "Publicación creada exitosamente",
     data: nuevaPublicacion,
