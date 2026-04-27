@@ -5,9 +5,14 @@ export const generarBiografiaService = async (artista, titulo) => {
   const MODEL = "gemini-2.5-flash";
   const ENDPOINT = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`;
 
-  const text = `Generame una biografia de maximo 600 caracteres para el artista ${artista} de la obra ${titulo}.
-  Deberia incluir los detalles mas relevantes del artista, como su estilo, epoca, obras mas conocidas, y cualquier otro dato interesante pero sin pasarte de los caracteres maximos.
-  Retorname solo la biografia lista para ser guardada en la base de datos. `;
+  const text = `Escribí una biografía del artista ${artista} (obra: ${titulo}).
+    REGLAS OBLIGATORIAS:
+    - Máximo 600 caracteres
+    - No exceder bajo ninguna circunstancia
+    - Sin introducciones ni explicaciones
+    - Solo texto plano listo para guardar
+
+    Si no podés cumplir el límite, resumí más.`;
 
   try {
     const response = await axios.post(
