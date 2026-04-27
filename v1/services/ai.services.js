@@ -11,6 +11,7 @@ export const generarBiografiaService = async (artista, titulo) => {
     - No exceder bajo ninguna circunstancia
     - Sin introducciones ni explicaciones
     - Solo texto plano listo para guardar
+    - Comenzar directamente con la biografía, sin encabezados ni saludos; con el nombre del aritsta
 
     Si no podés cumplir el límite, resumí más.`;
 
@@ -27,6 +28,7 @@ export const generarBiografiaService = async (artista, titulo) => {
         },
       },
     );
+
 
     return response.data.candidates?.[0]?.content?.parts?.[0]?.text || null;
   } catch (error) {
