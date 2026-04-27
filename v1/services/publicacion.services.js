@@ -261,7 +261,7 @@ export const finalizarPublicacionService = async (id) => {
     throw error;
   }
 
-  const publicacion = await Publicacion.findById(id).populate("ultimaOferta");
+  const publicacion = await Publicacion.findById(id).populate("ultimaOferta", "monto usuario");
 
   if (!publicacion) {
     const error = new Error("No se encontró la publicación a finalizar");
@@ -283,7 +283,6 @@ export const finalizarPublicacionService = async (id) => {
   publicacion.ganador = ofertaGanadora ? ofertaGanadora.usuario : null;
 
   await publicacion.save();
-  return publicacion
+  return await publicacion
     .populate("ganador", "nombre email")
-    .populate("ultimaOferta", "monto usuario");
 };
