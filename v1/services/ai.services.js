@@ -7,7 +7,7 @@ export const generarBiografiaService = async (artista, titulo) => {
 
   const text = `Escribí una biografía del artista ${artista} (obra: ${titulo}).
     REGLAS OBLIGATORIAS:
-    - Maximo 100 palabras
+    - Maximo 5 renglones de texto, sin importar el largo de cada renglón
     - No exceder bajo ninguna circunstancia
     - Sin introducciones ni explicaciones
     - Solo texto plano listo para guardar
@@ -28,7 +28,6 @@ export const generarBiografiaService = async (artista, titulo) => {
         },
       },
     );
-
 
     return response.data.candidates?.[0]?.content?.parts?.[0]?.text || null;
   } catch (error) {
