@@ -7,7 +7,7 @@ export const generarBiografiaService = async (artista, titulo) => {
 
   const text = `Escribí una biografía del artista ${artista} (obra: ${titulo}).
     REGLAS OBLIGATORIAS:
-    - Máximo 600 caracteres
+    - Maximo 100 palabras
     - No exceder bajo ninguna circunstancia
     - Sin introducciones ni explicaciones
     - Solo texto plano listo para guardar
