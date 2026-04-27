@@ -5,10 +5,11 @@ import {
   modificarPublicacionService,
   eliminarPublicacionService,
   misPublicacionesService,
+  finalizarPublicacionService,
 } from "../services/publicacion.services.js";
 
 export const obtenerPublicaciones = async (req, res) => {
-  const{page, limit} = req.query;
+  const { page, limit } = req.query;
   const filtro = {};
   if (req.query.estado) filtro.estado = req.query.estado;
   if (req.query.tipoObra) filtro.tipoObra = req.query.tipoObra;
@@ -23,7 +24,11 @@ export const obtenerPublicaciones = async (req, res) => {
       $options: "i",
     };
 
-  const publicaciones = await obtenerPublicacionesService({ filtro, page, limit });
+  const publicaciones = await obtenerPublicacionesService({
+    filtro,
+    page,
+    limit,
+  });
   res.status(200).json(publicaciones);
 };
 
