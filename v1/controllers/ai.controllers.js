@@ -8,7 +8,7 @@ export const useGemini25Flash = (req, res) => {
   const { artista, titulo } = req.body;
   let text = `Escribí una biografía del artista ${artista} (obra: ${titulo}).
     REGLAS OBLIGATORIAS:
-    - Maximo 5 renglones de texto, sin importar el largo de cada renglón
+    - Maximo 500 caracteres
     - No exceder bajo ninguna circunstancia
     - Sin introducciones ni explicaciones
     - Solo texto plano listo para guardar
