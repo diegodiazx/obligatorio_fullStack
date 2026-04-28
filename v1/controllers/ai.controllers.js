@@ -6,7 +6,15 @@ export const getModels = (req, res) => {
 
 export const useGemini25Flash = (req, res) => {
   const { artista, titulo } = req.body;
-  let text = `Generame una biografia corta para el artista ${artista} de la obra ${titulo}`;
+  let text = `Escribí una biografía del artista ${artista} (obra: ${titulo}).
+    REGLAS OBLIGATORIAS:
+    - Maximo 5 renglones de texto, sin importar el largo de cada renglón
+    - No exceder bajo ninguna circunstancia
+    - Sin introducciones ni explicaciones
+    - Solo texto plano listo para guardar
+    - Comenzar directamente con la biografía, sin encabezados ni saludos; con el nombre del aritsta
+
+    Si no podés cumplir el límite, resumí más.`;
   const API_KEY = process.env.GEMINI_25_API_KEY;
   const MODEL = "gemini-2.5-flash";
   const ENDPOINT = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`;
