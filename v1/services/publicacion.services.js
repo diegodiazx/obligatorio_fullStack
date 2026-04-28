@@ -65,13 +65,24 @@ export const misPublicacionesService = async (usuarioId, page, limit) => {
     throw error;
   }
 
+  page = Number(page) || 1;
+  limit = Number(limit) || 3;
+  const skip = (page - 1) * limit;
+  const cantidadPublicaciones = await Publicacion.countDocuments();
+  //cant de paginas totales
+  const paginas = Math.ceil(cantidadPublicaciones / limit);
+
+
   if (usuario.rol === "vendedor") {
     const publicaciones = await Publicacion.find({ vendedor: usuarioId })
       .populate("tipoObra")
       .populate("ganador", "nombre email")
       .populate("vendedor", "nombre email")
-      .populate("ultimaOferta", "monto usuario");
-    return publicaciones;
+      .populate("ultimaOferta", "monto usuario")
+      .skip(skip)
+      .limit(limit);
+  return { publicaciones, paginas, page, limit };
+
   } else if (usuario.rol === "comprador") {
     const publicacionesIds = await Oferta.distinct("publicacion", {
       usuario: usuarioId,
@@ -81,16 +92,18 @@ export const misPublicacionesService = async (usuarioId, page, limit) => {
       _id: { $in: publicacionesIds },
     })
       .populate("tipoObra")
-      .populate("ganador", "nombre email");
+      .populate("ganador", "nombre email")
+      .skip(skip)
+      .limit(limit);
 
-    return publicaciones;
+  return { publicaciones, paginas, page, limit };
+
   } else {
     //?? esto no deberia pasar porque el rol lo validamos en el registro, pero por las dudas
     const error = new Error("Rol de usuario no válido");
     error.status = 400;
     throw error;
   }
-  return [];
 };
 
 export const crearPublicacionService = async (data, usuarioId) => {

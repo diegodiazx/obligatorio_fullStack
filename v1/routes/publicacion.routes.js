@@ -13,12 +13,16 @@ import {
   eliminarPublicacion,
   finalizarPublicacion,
 } from "../controllers/publicacion.controllers.js";
+import { accessMiddleware } from "../middlewares/access.middleware.js";
 
 const router = express.Router({ mergeParams: true });
 
 router.get("/", obtenerPublicaciones);
 router.get("/mis-publicaciones", misPublicaciones);
 router.get("/:id", obtenerPublicacionPorId);
+
+router.use(accessMiddleware(["vendedor"]));
+
 router.post(
   "/",
   validateBodyMiddleware(crearPublicacionSchema),

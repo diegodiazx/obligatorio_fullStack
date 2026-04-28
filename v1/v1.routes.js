@@ -19,12 +19,12 @@ router.use(authorizationMiddleware);
 
 //rutas protegidas
 
-router.use("/tipoObra", tipoObraRouter);
+router.use("/tipoObra", accessMiddleware(["vendedor"], tipoObraRouter));
 router.use("/publicacion", publicacionRouter);
-router.use("/usuario", usuarioRouter);
+router.use("/usuario", accessMiddleware(["vendedor"]),usuarioRouter);
 router.use("/uploads", uploadsRouter);
-router.use("/ai", aiRouter);
-router.use("/oferta", ofertaRouter);
+router.use("/ai", aiRouter); //endpoint innecesario; solo llamamos lo de ai cuando creamos la publi
+router.use("/oferta", accessMiddleware(["comprador"]), ofertaRouter);
 
 //router.use(accessMiddleware(['vendedor']));
 
