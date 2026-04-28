@@ -26,7 +26,7 @@ export const obtenerPublicacionesService = async ({ filtro, page, limit }) => {
     error.status = 404;
     throw error;
   }
-  return publicaciones;
+  return { publicaciones, paginas, page, limit };
 };
 
 export const obtenerPublicacionPorIdService = async (id) => {
@@ -193,14 +193,7 @@ export const crearPublicacionService = async (data, usuarioId) => {
   return await nuevaPublicacion.save();
 };
 
-/* para acceder a la info de lo que traermos de la api, hacemos .data.
-los campos son title, artist_title, classification_title, image_id,  iiif_url dentro
-de config.
-*/
-
-//que pasa con las ofertas para una publicacion cuando la eliminamos?
-//se eliminan tambien? de la coleccion
-export const eliminarPublicacionService = async (id) => {
+export const eliminarPublicacionService = async (id, usuarioId) => {
   if (!isValidObjectId(id)) {
     const error = new Error("ID con formato inválido");
     error.status = 400;
@@ -208,18 +201,41 @@ export const eliminarPublicacionService = async (id) => {
     throw error;
   }
 
-  const publicacionEliminada = await Publicacion.findByIdAndDelete(id);
-  if (!publicacionEliminada) {
+  const publicacionAEliminar = await Publicacion.findById(id);
+  if (!publicacionAEliminar) {
     const error = new Error("No se encontró la publicación a eliminar");
     error.status = 404;
     error.details = { id: id };
     throw error;
   }
 
-  return publicacionEliminada;
+  if (!isValidObjectId(usuarioId)) {
+    const error = new Error("ID de usuario con formato inválido");
+    error.status = 400;
+    error.details = { id: usuarioId };
+    throw error;
+  }
+  if (publicacionAEliminar.vendedor.toString() !== usuarioId) {
+    const error = new Error(
+      "La publicación solo puede ser eliminada por su vendedor",
+    );
+    error.status = 403;
+    throw error;
+  }
+
+  await Publicacion.deleteOne({ _id: id });
+
+  //eliminamos todas las ofertas relacionadas a esa publicacion
+  await Oferta.deleteMany({ publicacion: id });
+
+  return publicacionAEliminar;
 };
 
-export const modificarPublicacionService = async (id, dataActualizada) => {
+export const modificarPublicacionService = async (
+  id,
+  dataActualizada,
+  usuarioId,
+) => {
   if (!isValidObjectId(id)) {
     const error = new Error("ID con formato inválido");
     error.status = 400;
@@ -232,6 +248,20 @@ export const modificarPublicacionService = async (id, dataActualizada) => {
     const error = new Error("No se encontró la publicación a modificar");
     error.status = 404;
     error.details = { id: id };
+    throw error;
+  }
+
+  if (!isValidObjectId(usuarioId)) {
+    const error = new Error("ID de usuario con formato inválido");
+    error.status = 400;
+    error.details = { id: usuarioId };
+    throw error;
+  }
+  if (publicacionAModificar.vendedor.toString() !== usuarioId) {
+    const error = new Error(
+      "La publicación solo puede ser modificada por su vendedor",
+    );
+    error.status = 403;
     throw error;
   }
   if (
@@ -253,7 +283,7 @@ export const modificarPublicacionService = async (id, dataActualizada) => {
   return publicacionModificada;
 };
 
-export const finalizarPublicacionService = async (id) => {
+export const finalizarPublicacionService = async (id, usuarioId) => {
   if (!isValidObjectId(id)) {
     const error = new Error("ID con formato inválido");
     error.status = 400;
@@ -261,11 +291,28 @@ export const finalizarPublicacionService = async (id) => {
     throw error;
   }
 
-  const publicacion = await Publicacion.findById(id).populate("ultimaOferta", "monto usuario");
+  const publicacion = await Publicacion.findById(id).populate(
+    "ultimaOferta",
+    "monto usuario",
+  );
 
   if (!publicacion) {
     const error = new Error("No se encontró la publicación a finalizar");
     error.status = 404;
+    throw error;
+  }
+
+  if (!isValidObjectId(usuarioId)) {
+    const error = new Error("ID de usuario con formato inválido");
+    error.status = 400;
+    error.details = { id: usuarioId };
+    throw error;
+  }
+  if (publicacion.vendedor.toString() !== usuarioId) {
+    const error = new Error(
+      "La publicación solo puede ser finalizada por su vendedor",
+    );
+    error.status = 403;
     throw error;
   }
 
@@ -283,6 +330,5 @@ export const finalizarPublicacionService = async (id) => {
   publicacion.ganador = ofertaGanadora ? ofertaGanadora.usuario : null;
 
   await publicacion.save();
-  return await publicacion
-    .populate("ganador", "nombre email")
+  return await publicacion.populate("ganador", "nombre email");
 };
