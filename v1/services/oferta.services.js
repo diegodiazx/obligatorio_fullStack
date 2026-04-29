@@ -33,10 +33,10 @@ export const crearOfertaService = async (monto, usuarioId, publicacionId) => {
     throw error;
   }
 
-  //1era oferta siempre tiene que ser mayor al precio base
-  if (monto <= publicacion.precioBase) {
+  //1era oferta siempre tiene que ser mayor o igual al precio base
+  if (monto < publicacion.precioBase) {
     const error = new Error(
-      "El monto de la oferta debe ser mayor al precio base",
+      "El monto de la oferta debe ser mayor o igual al precio base",
     );
     error.status = 400;
     throw error;
