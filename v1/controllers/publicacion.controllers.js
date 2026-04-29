@@ -29,13 +29,23 @@ export const obtenerPublicaciones = async (req, res) => {
     page,
     limit,
   });
-  res.status(200).json({ mensaje: "Publicaciones obtenidas exitosamente", data: resultado.publicaciones, paginas: resultado.paginas, page: resultado.page, limit: resultado.limit });
+  res
+    .status(200)
+    .json({
+      mensaje: "Publicaciones obtenidas exitosamente",
+      publicaciones: resultado.publicaciones,
+      paginas: resultado.paginas,
+      page: resultado.page,
+      limit: resultado.limit,
+    });
 };
 
 export const obtenerPublicacionPorId = async (req, res) => {
   const { id } = req.params;
   const publicacion = await obtenerPublicacionPorIdService(id);
-  res.status(200).json({ mensaje: "Publicación obtenida exitosamente", data: publicacion });
+  res
+    .status(200)
+    .json({ mensaje: "Publicación obtenida exitosamente", data: publicacion });
 };
 
 export const misPublicaciones = async (req, res) => {
@@ -64,7 +74,7 @@ export const modificarPublicacion = async (req, res) => {
   const publicacionModificada = await modificarPublicacionService(
     id,
     req.validatedBody,
-    req.user.id
+    req.user.id,
   );
   res.status(200).json({
     mensaje: "Publicación modificada exitosamente",
@@ -74,7 +84,10 @@ export const modificarPublicacion = async (req, res) => {
 
 export const eliminarPublicacion = async (req, res) => {
   const { id } = req.params;
-  const publicacionEliminada = await eliminarPublicacionService(id, req.user.id);
+  const publicacionEliminada = await eliminarPublicacionService(
+    id,
+    req.user.id,
+  );
   res.status(200).json({
     mensaje: "Publicación eliminada exitosamente",
     data: publicacionEliminada,
@@ -83,7 +96,10 @@ export const eliminarPublicacion = async (req, res) => {
 
 export const finalizarPublicacion = async (req, res) => {
   const { id } = req.params;
-  const publicacionFinalizada = await finalizarPublicacionService(id, req.user.id);
+  const publicacionFinalizada = await finalizarPublicacionService(
+    id,
+    req.user.id,
+  );
   res.status(200).json({
     mensaje: "Publicación finalizada exitosamente",
     data: publicacionFinalizada,
