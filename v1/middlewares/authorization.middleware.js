@@ -24,6 +24,7 @@ export const authorizationMiddleware = (req, res, next) => {
       return res.status(401).json({ message: "Token invalido" });
     }
     //si el token es valido, guardamos la informacion del token en req.user para usarla en las rutas protegidas
+    //esa info incluye el id, email y rol
     req.user = decoded;
     next();
   });
