@@ -32,7 +32,11 @@ export const registroSchema = Joi.object({
       "string.max": "El apellido no puede exceder los {#limit} caracteres",
       "any.required": "El apellido es obligatorio",
     }),
-  }),
+  })
+    .required()
+    .messages({
+      "any.required": "El nombre completo es obligatorio",
+    }),
   rol: Joi.string().valid("vendedor", "comprador").required().messages({
     "string.base": "El rol debe ser una cadena de texto",
     "string.empty": "El rol no puede estar vacío",
