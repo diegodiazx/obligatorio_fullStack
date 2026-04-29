@@ -52,7 +52,7 @@ export const misPublicaciones = async (req, res) => {
   const resultado = await misPublicacionesService(usuarioId, { page, limit });
   res.status(200).json({
     mensaje: "Publicaciones obtenidas exitosamente",
-    data: resultado.publicaciones,
+    publicaciones: resultado.publicaciones,
     paginas: resultado.paginas,
     page: resultado.page,
     limit: resultado.limit,
