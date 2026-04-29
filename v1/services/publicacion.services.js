@@ -9,10 +9,10 @@ export const obtenerPublicacionesService = async ({ filtro, page, limit }) => {
   page = Number(page) || 1;
   limit = Number(limit) || 3;
   const skip = (page - 1) * limit;
-  const cantidadPublicaciones = await Publicacion.countDocuments();
+  const cantidadPublicaciones = await Publicacion.countDocuments(filtro);
   //cant de paginas totales
   const paginas = Math.ceil(cantidadPublicaciones / limit);
-
+console.log("FILTRO:", filtro);
   const publicaciones = await Publicacion.find(filtro)
     .populate("tipoObra")
     .populate("ganador", "nombre email")
