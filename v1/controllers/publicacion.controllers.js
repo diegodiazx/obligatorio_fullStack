@@ -24,12 +24,12 @@ export const obtenerPublicaciones = async (req, res) => {
       $options: "i",
     };
 
-  const publicaciones = await obtenerPublicacionesService({
+  const resultado = await obtenerPublicacionesService({
     filtro,
     page,
     limit,
   });
-  res.status(200).json({ mensaje: "Publicaciones obtenidas exitosamente", data: publicaciones, paginas, page, limit });
+  res.status(200).json({ mensaje: "Publicaciones obtenidas exitosamente", data: resultado.publicaciones, paginas: resultado.paginas, page: resultado.page, limit: resultado.limit });
 };
 
 export const obtenerPublicacionPorId = async (req, res) => {
