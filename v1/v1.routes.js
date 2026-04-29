@@ -24,7 +24,7 @@ router.use("/publicacion", publicacionRouter);
 router.use("/usuario", accessMiddleware(["vendedor"]), usuarioRouter);
 router.use("/uploads", uploadsRouter);
 router.use("/ai", aiRouter); //endpoint innecesario; solo llamamos lo de ai cuando creamos la publi
-router.use("/oferta", accessMiddleware(["comprador"]), ofertaRouter);
+router.use("/oferta", ofertaRouter);
 
 //router.use(accessMiddleware(['vendedor']));
 

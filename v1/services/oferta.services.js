@@ -72,3 +72,18 @@ export const crearOfertaService = async (monto, usuarioId, publicacionId) => {
   await publicacion.save();
   return nuevaOferta;
 };
+
+export const obtenerOfertasPorPublicacionService = async (publicacionId) => {
+  if (!isValidObjectId(publicacionId)) {
+    const error = new Error("ID de publicación con formato inválido");
+    error.status = 400;
+    error.details = { id: publicacionId };
+    throw error;
+  }
+
+  const ofertas = await Oferta.find({ publicacion: publicacionId }).populate(
+    "usuario",
+    "nombre email",
+  );
+  return ofertas;
+};
