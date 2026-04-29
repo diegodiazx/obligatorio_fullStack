@@ -29,15 +29,13 @@ export const obtenerPublicaciones = async (req, res) => {
     page,
     limit,
   });
-  res
-    .status(200)
-    .json({
-      mensaje: "Publicaciones obtenidas exitosamente",
-      publicaciones: resultado.publicaciones,
-      paginas: resultado.paginas,
-      page: resultado.page,
-      limit: resultado.limit,
-    });
+  res.status(200).json({
+    mensaje: "Publicaciones obtenidas exitosamente",
+    publicaciones: resultado.publicaciones,
+    paginas: resultado.paginas,
+    page: resultado.page,
+    limit: resultado.limit,
+  });
 };
 
 export const obtenerPublicacionPorId = async (req, res) => {
@@ -49,11 +47,15 @@ export const obtenerPublicacionPorId = async (req, res) => {
 };
 
 export const misPublicaciones = async (req, res) => {
+  const { page, limit } = req.query;
   const usuarioId = req.user.id;
-  const publicaciones = await misPublicacionesService(usuarioId);
+  const resultado = await misPublicacionesService(usuarioId, { page, limit });
   res.status(200).json({
     mensaje: "Publicaciones obtenidas exitosamente",
-    data: publicaciones,
+    data: resultado.publicaciones,
+    paginas: resultado.paginas,
+    page: resultado.page,
+    limit: resultado.limit,
   });
 };
 
