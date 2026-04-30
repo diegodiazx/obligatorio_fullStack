@@ -12,7 +12,7 @@ export const obtenerPublicacionesService = async ({ filtro, page, limit }) => {
   const cantidadPublicaciones = await Publicacion.countDocuments(filtro);
   //cant de paginas totales
   const paginas = Math.ceil(cantidadPublicaciones / limit);
-console.log("FILTRO:", filtro);
+  console.log("FILTRO:", filtro);
   const publicaciones = await Publicacion.find(filtro)
     .populate("tipoObra")
     .populate("ganador", "nombre email")
@@ -68,10 +68,6 @@ export const misPublicacionesService = async (usuarioId, page, limit) => {
   page = Number(page) || 1;
   limit = Number(limit) || 3;
   const skip = (page - 1) * limit;
-  const cantidadPublicaciones = await Publicacion.countDocuments();
-  //cant de paginas totales
-  const paginas = Math.ceil(cantidadPublicaciones / limit);
-
 
   if (usuario.rol === "vendedor") {
     const publicaciones = await Publicacion.find({ vendedor: usuarioId })
@@ -81,13 +77,14 @@ export const misPublicacionesService = async (usuarioId, page, limit) => {
       .populate("ultimaOferta", "monto usuario")
       .skip(skip)
       .limit(limit);
-  return { publicaciones, paginas, page, limit };
-
+    const cantidadPublicaciones = publicaciones.length;
+    //cant de paginas totales
+    const paginas = Math.ceil(cantidadPublicaciones / limit);
+    return { publicaciones, paginas, page, limit };
   } else if (usuario.rol === "comprador") {
     const publicacionesIds = await Oferta.distinct("publicacion", {
       usuario: usuarioId,
     });
-
     const publicaciones = await Publicacion.find({
       _id: { $in: publicacionesIds },
     })
@@ -95,9 +92,10 @@ export const misPublicacionesService = async (usuarioId, page, limit) => {
       .populate("ganador", "nombre email")
       .skip(skip)
       .limit(limit);
-
-  return { publicaciones, paginas, page, limit };
-
+    const cantidadPublicaciones = publicaciones.length;
+    //cant de paginas totales
+    const paginas = Math.ceil(cantidadPublicaciones / limit);
+    return { publicaciones, paginas, page, limit };
   } else {
     //?? esto no deberia pasar porque el rol lo validamos en el registro, pero por las dudas
     const error = new Error("Rol de usuario no válido");
