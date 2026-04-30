@@ -1,6 +1,7 @@
 import Publicacion from "../models/publicacion.model.js";
 import Usuario from "../models/usuario.model.js";
 import Oferta from "../models/oferta.model.js";
+import TipoObra from "../models/tipoObra.model.js";
 import axios from "axios";
 import { isValidObjectId } from "mongoose";
 import { generarBiografiaService } from "./ai.services.js";
@@ -152,6 +153,14 @@ export const crearPublicacionService = async (data, usuarioId) => {
     );
     error.status = 409;
     error.details = { id };
+    throw error;
+  }
+
+  const tipoObra = await TipoObra.findById(data.tipoObra);
+  if (!tipoObra) {
+    const error = new Error("No se encontró el tipo de obra especificado");
+    error.status = 404;
+    error.details = { id: data.tipoObra };
     throw error;
   }
 
