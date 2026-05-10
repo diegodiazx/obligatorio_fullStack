@@ -2,6 +2,7 @@ import { upload } from "../middlewares/multer.middleware.js";
 import cloudinary from "../config/cloudinary.js";
 import { runMulterSingle } from "../utils/multer.util.js";
 import { uploadBufferToCloudinary } from "../utils/cloudinary.util.js";
+import { subirFotoPerfilService } from "../services/uploads.services.js";
 
 export const subirImagen = async (req, res) => {
   try {
@@ -20,7 +21,9 @@ export const subirImagen = async (req, res) => {
       folder,
     });
 
-    return res.json({ url: result.secure_url, folder: result.folder });
+    const usuario = await subirFotoPerfilService(req.user.id, result.secure_url);
+
+    return res.json({ url: result.secure_url, folder: result.folder, usuario: usuario });
   } catch (error) {
     console.error("Error al subir imagen:", error);
     return res.status(500).json({ error: "Error al subir imagen" });

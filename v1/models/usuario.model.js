@@ -28,6 +28,9 @@ const usuarioSchema = new mongoose.Schema(
         subscripcion:{
             type: String,
             enum: ["plus", "premium"]
+        },
+        urlFotoPerfil: {
+            type: String
         }
     }
 );
