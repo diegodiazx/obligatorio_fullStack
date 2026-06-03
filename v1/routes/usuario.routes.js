@@ -7,11 +7,11 @@ import {
 
 const router = express.Router({ mergeParams: true });
 
-router.get("/:id", obtenerUsuarioPorId);
 router.patch(
   "/plan/premium",
   accessMiddleware(["vendedor"]),
   actualizarPlanPremium,
 );
+router.get("/:id", obtenerUsuarioPorId);
 
 export default router;
