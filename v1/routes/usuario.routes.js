@@ -1,4 +1,5 @@
 import express from "express";
+import { accessMiddleware } from "../middlewares/access.middleware.js";
 import {
   actualizarPlanPremium,
   obtenerUsuarioPorId,
