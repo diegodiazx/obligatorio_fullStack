@@ -1,8 +1,9 @@
 import express from "express";
-import { actualizarPlanPremium } from "../controllers/usuario.controllers.js";
+import { actualizarPlanPremium, obtenerUsuarioPorId } from "../controllers/usuario.controllers.js";
 
 const router = express.Router({ mergeParams: true });
 
+router.get("/:id", obtenerUsuarioPorId);
 router.patch("/plan/premium", actualizarPlanPremium);
 
 export default router;

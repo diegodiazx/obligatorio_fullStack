@@ -40,3 +40,20 @@ export const actualizarPlanPremiumService = async (usuarioId) => {
     subscripcion: usuario.subscripcion,
   };
 };
+
+export const obtenerUsuarioPorIdService = async (id) => {
+  if (!isValidObjectId(id)) {
+    const error = new Error("ID de usuario con formato invalido");
+    error.status = 400;
+    error.details = { id };
+    throw error;
+  }
+  const usuario = await Usuario.findById(id);
+  if (!usuario) {
+    const error = new Error("No se encontro el usuario");
+    error.status = 404;
+    error.details = { id };
+    throw error;
+  }
+  return usuario;
+};
