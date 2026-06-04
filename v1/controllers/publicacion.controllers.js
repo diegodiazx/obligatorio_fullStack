@@ -11,9 +11,16 @@ import {
 export const obtenerPublicaciones = async (req, res) => {
   const { page, limit } = req.query;
   const filtro = {};
+
   if (req.query.estado) filtro.estado = req.query.estado;
   if (req.query.tipoObra) filtro.tipoObra = req.query.tipoObra;
-  if (req.query.titulo)
+  if (req.query.buscar) {
+    filtro.$or = [
+      { "obra.titulo": { $regex: req.query.buscar, $options: "i" } },
+      { "obra.artista": { $regex: req.query.buscar, $options: "i" } },
+    ];
+  }
+  /*   if (req.query.titulo)
     filtro["obra.titulo"] = {
       $regex: req.query.titulo,
       $options: "i",
@@ -22,7 +29,7 @@ export const obtenerPublicaciones = async (req, res) => {
     filtro["obra.artista"] = {
       $regex: req.query.artista,
       $options: "i",
-    };
+    }; */
 
   const resultado = await obtenerPublicacionesService({
     filtro,
