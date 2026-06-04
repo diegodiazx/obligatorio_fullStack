@@ -8,6 +8,7 @@ import {
 } from "../controllers/tipoObra.controllers.js";
 import { tipoObraSchema } from "../validators/tipoObra.validators.js";
 import { validateBodyMiddleware } from "../middlewares/validateBody.middleware.js";
+import { accessMiddleware } from "../middlewares/access.middleware.js";
 
 const router = express.Router({ mergeParams: true });
 
