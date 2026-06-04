@@ -13,8 +13,18 @@ const router = express.Router({ mergeParams: true });
 
 router.get("/", obtenerTiposObra);
 router.get("/:id", obtenerTipoObraPorId);
-router.post("/", validateBodyMiddleware(tipoObraSchema), crearTipoObra);
-router.put("/:id", validateBodyMiddleware(tipoObraSchema), modificarTipoObra);
-router.delete("/:id", eliminarTipoObra);
+router.post(
+  "/",
+  accessMiddleware(["vendedor"]),
+  validateBodyMiddleware(tipoObraSchema),
+  crearTipoObra,
+);
+router.put(
+  "/:id",
+  accessMiddleware(["vendedor"]),
+  validateBodyMiddleware(tipoObraSchema),
+  modificarTipoObra,
+);
+router.delete("/:id", accessMiddleware(["vendedor"]), eliminarTipoObra);
 
 export default router;

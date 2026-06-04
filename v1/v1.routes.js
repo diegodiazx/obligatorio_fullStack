@@ -19,7 +19,7 @@ router.use(authorizationMiddleware);
 
 //rutas protegidas
 
-router.use("/tipoObra", accessMiddleware(["vendedor"]), tipoObraRouter);
+router.use("/tipoObra", tipoObraRouter);
 router.use("/publicacion", publicacionRouter);
 router.use("/usuario", usuarioRouter);
 router.use("/uploads", uploadsRouter);
