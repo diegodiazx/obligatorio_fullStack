@@ -91,6 +91,7 @@ export const misPublicacionesService = async (usuarioId, page, limit) => {
     })
       .populate("tipoObra")
       .populate("ganador", "nombre email")
+      .populate("ultimaOferta", "monto usuario")
       .skip(skip)
       .limit(limit);
     const cantidadPublicaciones = publicaciones.length;
