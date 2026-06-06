@@ -87,3 +87,38 @@ export const obtenerOfertasPorPublicacionService = async (publicacionId) => {
   );
   return ofertas;
 };
+
+export const obtenerMiOfertaPorPublicacionService = async (
+  publicacionId,
+  usuarioId,
+) => {
+  if (!isValidObjectId(publicacionId)) {
+    const error = new Error("ID de publicación con formato inválido");
+    error.status = 400;
+    error.details = { id: publicacionId };
+    throw error;
+  }
+
+  if (!isValidObjectId(usuarioId)) {
+    const error = new Error("ID de usuario con formato inválido");
+    error.status = 400;
+    error.details = { id: usuarioId };
+    throw error;
+  }
+
+  //siempre va a existir, esta logueado ??
+  const usuario = await Usuario.findById(usuarioId);
+  if (!usuario) {
+    const error = new Error("No se encontró el usuario");
+    error.status = 404;
+    throw error;
+  }
+
+  const oferta = await Oferta.findOne({
+    publicacion: publicacionId,
+    usuario: usuarioId,
+  })
+    .sort({ fechaOferta: -1 })
+    .populate("usuario", "nombre email");
+  return oferta;
+};
