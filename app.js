@@ -13,7 +13,13 @@ import { errorMiddleware } from "./v1/middlewares/error.middleware.js";
 connectDB();
 
 const app = express();
-app.use(cors());
+app.use(
+  cors({
+    origin: ["https://obligatorio2-fs.vercel.app", "http://localhost:5173"],
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  }),
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
