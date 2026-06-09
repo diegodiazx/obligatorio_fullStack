@@ -54,19 +54,6 @@ export const obtenerPublicacionPorId = async (req, res) => {
 };
 
 export const misPublicaciones = async (req, res) => {
-  const { page, limit } = req.query;
-  const usuarioId = req.user.id;
-  const resultado = await misPublicacionesService(usuarioId, page, limit);
-  res.status(200).json({
-    mensaje: "Publicaciones obtenidas exitosamente",
-    publicaciones: resultado.publicaciones,
-    paginas: resultado.paginas,
-    page: resultado.page,
-    limit: resultado.limit,
-  });
-};
-
-export const misPublicaciones = async (req, res) => {
   const { page, limit, estado, buscar, tipoObra } = req.query;
   const usuarioId = req.user.id;
   const filtros = { estado, buscar, tipoObra };
