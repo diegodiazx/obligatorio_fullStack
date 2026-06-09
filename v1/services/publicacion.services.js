@@ -50,14 +50,18 @@ export const obtenerPublicacionPorIdService = async (id) => {
   return publicacion;
 };
 
-export const misPublicacionesService = async (usuarioId, page, limit) => {
+export const misPublicacionesService = async (
+  usuarioId,
+  page,
+  limit,
+  filtros = {},
+) => {
   if (!isValidObjectId(usuarioId)) {
     const error = new Error("ID de usuario con formato inválido");
     error.status = 400;
     error.details = { id: usuarioId };
     throw error;
   }
-
   const usuario = await Usuario.findById(usuarioId);
   if (!usuario) {
     const error = new Error("No se encontró el usuario");
@@ -65,13 +69,21 @@ export const misPublicacionesService = async (usuarioId, page, limit) => {
     error.details = { id: usuarioId };
     throw error;
   }
-
   page = Number(page) || 1;
   limit = Number(limit) || 3;
   const skip = (page - 1) * limit;
 
   if (usuario.rol === "vendedor") {
-    const publicaciones = await Publicacion.find({ vendedor: usuarioId })
+    const query = { vendedor: usuarioId };
+    if (filtros.estado) query.estado = filtros.estado;
+    if (filtros.tipoObra) query.tipoObra = filtros.tipoObra;
+    if (filtros.buscar) {
+      query.$or = [
+        { "obra.titulo": { $regex: filtros.buscar, $options: "i" } },
+        { "obra.artista": { $regex: filtros.buscar, $options: "i" } },
+      ];
+    }
+    const publicaciones = await Publicacion.find(query)
       .populate("tipoObra")
       .populate("ganador", "nombre email")
       .populate("vendedor", "nombre email")
@@ -79,7 +91,6 @@ export const misPublicacionesService = async (usuarioId, page, limit) => {
       .skip(skip)
       .limit(limit);
     const cantidadPublicaciones = publicaciones.length;
-    //cant de paginas totales
     const paginas = Math.ceil(cantidadPublicaciones / limit);
     return { publicaciones, paginas, page, limit };
   } else if (usuario.rol === "comprador") {
@@ -95,11 +106,9 @@ export const misPublicacionesService = async (usuarioId, page, limit) => {
       .skip(skip)
       .limit(limit);
     const cantidadPublicaciones = publicaciones.length;
-    //cant de paginas totales
     const paginas = Math.ceil(cantidadPublicaciones / limit);
     return { publicaciones, paginas, page, limit };
   } else {
-    //?? esto no deberia pasar porque el rol lo validamos en el registro, pero por las dudas
     const error = new Error("Rol de usuario no válido");
     error.status = 400;
     throw error;

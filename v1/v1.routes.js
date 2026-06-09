@@ -23,7 +23,7 @@ router.use("/tipoObra", tipoObraRouter);
 router.use("/publicacion", publicacionRouter);
 router.use("/usuario", usuarioRouter);
 router.use("/uploads", uploadsRouter);
-router.use("/ai", aiRouter); //endpoint innecesario; solo llamamos lo de ai cuando creamos la publi
+router.use("/ai", aiRouter);
 router.use("/oferta", ofertaRouter);
 
 //router.use(accessMiddleware(['vendedor']));
