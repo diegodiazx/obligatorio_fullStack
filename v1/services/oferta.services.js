@@ -138,7 +138,10 @@ export const obtenerMisOfertas = async (usuarioId) => {
     throw error;
   }
 
-  const ofertas = await Oferta.find({ usuario: usuarioId }).populate(
+  // retornar las ofertas cuya publicación tenga como vendedor al usuario logueado
+  const publicaciones = await Publicacion.find({ vendedor: usuarioId }).select("_id");
+  const publicacionesIds = publicaciones.map((p) => p._id);
+  const ofertas = await Oferta.find({ publicacion: { $in: publicacionesIds } }).populate(
     "usuario",
     "nombre email",
   );

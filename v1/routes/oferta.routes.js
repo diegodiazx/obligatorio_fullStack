@@ -11,7 +11,7 @@ import { accessMiddleware } from "../middlewares/access.middleware.js";
 
 const router = express.Router({ mergeParams: true });
 
-router.get("/mis-ofertas", accessMiddleware(["comprador"]), obtenerMisOfertas);
+router.get("/mis-ofertas", accessMiddleware(["vendedor"]), obtenerMisOfertas);
 
 router.post(
   "/publicacion/:publicacionId",
