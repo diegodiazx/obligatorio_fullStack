@@ -122,3 +122,25 @@ export const obtenerMiOfertaPorPublicacionService = async (
     .populate("usuario", "nombre email");
   return oferta;
 };
+
+export const obtenerMisOfertas = async (usuarioId) => {
+  if (!isValidObjectId(usuarioId)) {
+    const error = new Error("ID de usuario con formato inválido");
+    error.status = 400;
+    error.details = { id: usuarioId };
+    throw error;
+  }
+
+  const usuario = await Usuario.findById(usuarioId);
+  if (!usuario) {
+    const error = new Error("No se encontró el usuario");
+    error.status = 404;
+    throw error;
+  }
+
+  const ofertas = await Oferta.find({ usuario: usuarioId }).populate(
+    "usuario",
+    "nombre email",
+  );
+  return ofertas;
+};

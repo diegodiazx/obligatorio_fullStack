@@ -1,7 +1,8 @@
-import { 
-  crearOfertaService, 
+import {
+  crearOfertaService,
   obtenerOfertasPorPublicacionService,
-  obtenerMiOfertaPorPublicacionService
+  obtenerMiOfertaPorPublicacionService,
+  obtenerMisOfertas,
 } from "../services/oferta.services.js";
 
 export const crearOferta = async (req, res) => {
@@ -18,11 +19,22 @@ export const obtenerOfertasPorPublicacion = async (req, res) => {
   const { publicacionId } = req.params;
   const ofertas = await obtenerOfertasPorPublicacionService(publicacionId);
   res.status(200).json({ mensaje: "Ofertas obtenidas exitosamente", ofertas });
-}
+};
 
 export const obtenerMiOfertaPorPublicacion = async (req, res) => {
   const { publicacionId } = req.params;
   const usuarioId = req.user.id;
-  const oferta = await obtenerMiOfertaPorPublicacionService(publicacionId, usuarioId);
+  const oferta = await obtenerMiOfertaPorPublicacionService(
+    publicacionId,
+    usuarioId,
+  );
   res.status(200).json({ mensaje: "Oferta obtenida exitosamente", oferta });
-}
+};
+
+export const obtenerMisOfertas = async (req, res) => {
+  const usuarioId = req.user.id;
+  const ofertas = await obtenerMisOfertas(usuarioId);
+  res
+    .status(200)
+    .json({ mensaje: "Mis ofertas obtenidas exitosamente", ofertas });
+};
