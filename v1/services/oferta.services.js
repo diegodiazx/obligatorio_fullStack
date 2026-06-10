@@ -123,7 +123,7 @@ export const obtenerMiOfertaPorPublicacionService = async (
   return oferta;
 };
 
-export const obtenerMisOfertas = async (usuarioId) => {
+export const obtenerMisOfertasService = async (usuarioId) => {
   if (!isValidObjectId(usuarioId)) {
     const error = new Error("ID de usuario con formato inválido");
     error.status = 400;

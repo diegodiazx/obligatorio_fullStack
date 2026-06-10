@@ -2,7 +2,7 @@ import {
   crearOfertaService,
   obtenerOfertasPorPublicacionService,
   obtenerMiOfertaPorPublicacionService,
-  obtenerMisOfertas,
+  obtenerMisOfertasService,
 } from "../services/oferta.services.js";
 
 export const crearOferta = async (req, res) => {
@@ -33,7 +33,7 @@ export const obtenerMiOfertaPorPublicacion = async (req, res) => {
 
 export const obtenerMisOfertas = async (req, res) => {
   const usuarioId = req.user.id;
-  const ofertas = await obtenerMisOfertas(usuarioId);
+  const ofertas = await obtenerMisOfertasService(usuarioId);
   res
     .status(200)
     .json({ mensaje: "Mis ofertas obtenidas exitosamente", ofertas });
