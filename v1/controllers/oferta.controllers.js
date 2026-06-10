@@ -12,7 +12,7 @@ export const crearOferta = async (req, res) => {
   const nuevaOferta = await crearOfertaService(monto, usuarioId, publicacionId);
   res
     .status(201)
-    .json({ mensaje: "Oferta creada exitosamente", oferta: nuevaOferta });
+    .json({ mensaje: "Oferta realizada exitosamente", oferta: nuevaOferta });
 };
 
 export const obtenerOfertasPorPublicacion = async (req, res) => {
